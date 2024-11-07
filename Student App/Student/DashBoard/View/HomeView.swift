@@ -34,24 +34,23 @@ struct HomeView: View {
                                 .customLabelStyle(textColor: .black50, fontSize: 16, fontName: .generalSansSemiBold)
                                 .frame(width: .screen24Width, alignment: .leading)
                             if vm.upComingAppos.isEmpty {
-                                ShimmerPlaceholder()
-                                ShimmerPlaceholder()
+                                ShimmerEffectView()
+                                ShimmerEffectView()
                             } else {
                                 ForEach(vm.upComingAppos, id: \.self){ data in
                                     UniversityAppointmentCell(data: data)
                                 }
                             }
-                        }
+                        }.padding(.vertical, 10)
                         
-                        .padding(.vertical, 10)
                         VStack(alignment: .leading, spacing: 10){
                             Text("Recommended Universities")
                                 .customLabelStyle(textColor: .black50, fontSize: 16, fontName: .generalSansSemiBold)
                             ScrollView(.horizontal, showsIndicators: false){
                                 HStack(spacing: 15){
-                                    if vm.upComingAppos.isEmpty {
-                                        ShimmerPlaceholder(width: .screen48Width/2)
-                                        ShimmerPlaceholder(width: .screen48Width/2)
+                                    if vm.allUniversity.isEmpty {
+                                        ShimmerEffectView(width: .screen48Width/2)
+                                        ShimmerEffectView(width: .screen48Width/2)
                                     } else {
                                         ForEach(vm.allUniversity, id: \.self){ data in
                                             NavigationLink(destination: BookSlotView(data: data).environmentObject(vm).navigationBarBackButtonHidden(), label: {

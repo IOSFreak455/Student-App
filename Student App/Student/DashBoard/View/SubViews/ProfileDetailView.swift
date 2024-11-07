@@ -169,8 +169,8 @@ struct UniversityProfileDetailView: View {
                 }
         }
         .onAppear {
-            self.name = "Shyam"
-            self.email = "shyam@uol.co"
+            self.name = "Anudee Varma"
+            self.email = "anudee.varama@uol.co"
             self.phoneNumber = "+103231231"
             self.collegeName = "University of London"
             self.location = "London"

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StudentTabView: View {
-    @ObservedObject var vm: StudentViewModel = StudentViewModel()
+    @StateObject var vm: StudentViewModel = StudentViewModel()
     @State var selectedIndex: Int = 0
     var body: some View {
         TabView(selection: $selectedIndex) {

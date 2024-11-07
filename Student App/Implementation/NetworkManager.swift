@@ -165,8 +165,13 @@ class NetworkManager {
         }.resume()
     }
 
-    func postRequest(url: URL, completion: @escaping (Result<(Data?, HTTPURLResponse), Error>) -> Void) {
-        var request = URLRequest(url: url)
+    func postRequest(url: URL, paramsQuery: [String: String] = [:], isFrom: Bool = false, completion: @escaping (Result<(Data?, HTTPURLResponse), Error>) -> Void) {
+        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        if isFrom {
+            urlComponents.queryItems = paramsQuery.map { URLQueryItem(name: $0.key, value: $0.value) }
+        }
+        
+        var request = URLRequest(url: isFrom ? urlComponents.url! : url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = Data()

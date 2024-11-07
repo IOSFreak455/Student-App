@@ -20,12 +20,13 @@ struct FacultyHomeView: View {
                     
                     ScrollView(.vertical, showsIndicators: false) {
                         ForEach(vm.allAppointments, id: \.self){ data in
-                            StudentAppointmentCell(model: data, isMessageIcon: false).environmentObject(vm)
+                            StudentAppointmentCell(model: data, isMessageIcon: true).environmentObject(vm)
                         }.padding(.top, 10)
                     }
                     Spacer(minLength: 0)
                 }.frame(width: .screen24Width, alignment: .leading)
             }
+            .overlay(vm.showToast ? ToastView(style: vm.toastType, message: vm.toastMessage ?? "", isShowing: $vm.showToast) : nil, alignment: .top)
         }
     }
 }
@@ -86,6 +87,5 @@ struct StudentAppointmentCell: View {
         }.padding().background(.anyWhite)
             .clipShape(RoundedRectangle(cornerRadius: 30))
             .padding(.vertical, 8)
-            
     }
 }

@@ -65,3 +65,29 @@ struct ShimmerPlaceholder: View {
             .frame(width: width, height: height)
     }
 }
+
+struct ShimmerEffectView: View {
+    @State private var animateShimmer = false
+    var width: CGFloat = .screen24Width
+    var height: CGFloat = 140
+    
+    var body: some View {
+        VStack {
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .frame(width: width, height: height)
+                .mask(RoundedRectangle(cornerRadius: 20)) // Optional masking for rounded corners
+                .overlay(
+                    Rectangle()
+                        .fill(LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0.3), Color.white.opacity(0.6), Color.white.opacity(0.3)]), startPoint: .leading, endPoint: .trailing))
+                        .frame(width: 50, height: height+10)
+                        .rotationEffect(.degrees(10))
+                        .offset(x: animateShimmer ? 500 : -500)
+                        .animation(Animation.linear(duration: 2).repeatForever(autoreverses: false), value: animateShimmer)
+                )
+                .onAppear {
+                    animateShimmer = true
+                }
+        }
+    }
+}

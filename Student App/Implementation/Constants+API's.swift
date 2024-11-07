@@ -18,7 +18,7 @@ enum EndPoints: String {
     case getAllAppointments = "getAllAppointments"
     case getAppointmentDetailsByID = "getAppointmentDetailsByID"
     case getAppointmentsByID = "getAppointmentsByID"
-    case getAppointmentByRepname = "getAppointmentsByRepname"
+    case getAppointmentByRepname = "getAppointmentsByRepname?repname=Anudeep%20Varma"
     case getAppointmentsWithByMN = "getAppointmentsWithMobileNumber"
     case getUpcomingAppos = "getUpcomingAppointments"
     

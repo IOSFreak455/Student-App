@@ -39,7 +39,7 @@ struct UniveristyProfileView: View {
             Color.white252
                 .ignoresSafeArea()
             VStack(alignment: .leading, spacing: 20){
-                Text("Hey, Shyam")
+                Text("Hey, Anudee Varma")
                     .customLabelStyle(textColor: .black50, fontSize: 24, fontName: .generalSansSemiBold)
                     .padding(.bottom, 30)
                 

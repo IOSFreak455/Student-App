@@ -38,7 +38,7 @@ class FacultyViewModel: ObservableObject {
                     do {
                         let decoder = JSONDecoder()
                         if response.statusCode == 200 {
-                            if endPoint == .getAllAppointments {
+                            if endPoint == .getAppointmentByRepname {
                             let responseModel = try decoder.decode([AllAppointmentModel].self, from: data!)
                                 self.allAppointments = responseModel
                             }

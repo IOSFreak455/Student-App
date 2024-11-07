@@ -40,7 +40,7 @@ struct FacultyTabView: View {
                 //Above API will kind of override other behaviour and bring the default UI for TabView
             })
             .onAppear{
-                self.vm.postRequest(endPoint: .getAllAppointments)
+                self.vm.postRequest(endPoint: .getAppointmentByRepname)
             }
     }
 }

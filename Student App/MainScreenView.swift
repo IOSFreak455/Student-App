@@ -19,16 +19,16 @@ struct MainScreenView: View {
                         .italic()
                     
                     NavigationLink(destination: LoginView().navigationBarBackButtonHidden(), label: {
-                        Text("Student")
-                            .customLabelStyle(textColor: .anyWhite, fontSize: 23, fontName: .generalSansBold)
+                        Text("Student Login")
+                            .customLabelStyle(textColor: .anyWhite, fontSize: 20, fontName: .generalSansBold)
                             .frame(width: .screen24Width, height: 65)
                             .background(Color.blue31)
                             .cornerRadius(10)
                     })
                     
                     NavigationLink(destination: LoginFacultyView().navigationBarBackButtonHidden(), label: {
-                        Text("Faculty")
-                            .customLabelStyle(textColor: .anyWhite, fontSize: 23, fontName: .generalSansBold)
+                        Text("Representative Login")
+                            .customLabelStyle(textColor: .anyWhite, fontSize: 20, fontName: .generalSansBold)
                             .frame(width: .screen24Width, height: 65)
                             .background(Color.green79)
                             .cornerRadius(10)

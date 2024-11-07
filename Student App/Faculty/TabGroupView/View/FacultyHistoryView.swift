@@ -20,7 +20,7 @@ struct FacultyHistoryView: View {
                     
                     ScrollView(.vertical, showsIndicators: false) {
                         ForEach(vm.allAppointments, id: \.self){ data in
-                            StudentAppointmentCell(model: data, isMessageIcon: true).environmentObject(vm)
+                            StudentAppointmentCell(model: data, isMessageIcon: false).environmentObject(vm)
                         }.padding(.top, 10)
                     }
                     Spacer(minLength: 0)

@@ -54,6 +54,7 @@ class StudentViewModel: ObservableObject {
     @Published var isSavedAccount: Bool = false
     
     init(){
+        self.postQueryRequest(endPoint: .getStudentDetailsByMobileNumber, params: ["phoneNumber": APIUrls.phoneNumber])
         loadSlots()
     }
     
@@ -80,6 +81,39 @@ class StudentViewModel: ObservableObject {
         }
         
         return images
+    }
+    
+    func postQueryRequest(endPoint: EndPoints, params: [String: String]) {
+        self.isLoading = true
+        guard let url = URL(string: APIUrls.baseUrl+endPoint.rawValue) else {
+            showToastMessage("Invalid URL", type: .error)
+            isLoading = false
+            return
+        }
+        
+        NetworkManager.shared.postRequest(url: url, paramsQuery: params, isFrom: true) { result in
+            DispatchQueue.main.async {
+                self.isLoading = false
+                switch result {
+                case .success(let (data, response)):
+                    do {
+                        let decoder = JSONDecoder()
+                        if response.statusCode == 200 {
+                            if endPoint == .getStudentDetailsByMobileNumber {
+                                let responseModel = try decoder.decode([StudentModel].self, from: data!)
+                                self.studentDetails = responseModel.first
+                            }
+                        } else {
+                            self.showToastMessage("Some thing went wrong", type: .error)
+                        }
+                    }  catch {
+                        self.toastMessage = error.localizedDescription
+                    }
+                case .failure(let error as NSError):
+                    self.showToastMessage(error.localizedDescription, type: .error)
+                }
+            }
+        }
     }
     
     func postRequest(endPoint: EndPoints) {
@@ -109,12 +143,6 @@ class StudentViewModel: ObservableObject {
                             } else if endPoint == .getRepnames {
                                 let repModel = try decoder.decode([Representatives].self, from: data!)
                                 self.repData = repModel
-                                print(self.repData)
-                                self.postRequest(endPoint: .getAllStudents)
-                            } else if endPoint == .getAllStudents {
-                                let decoder = JSONDecoder()
-                                let responseModel = try decoder.decode([StudentModel].self, from: data!)
-                                self.studentDetails = responseModel.filter({ $0.phonenumber == APIUrls.phoneNumber }).first
                             }
                         } else {
                             self.showToastMessage("Some thing went wrong", type: .error)
@@ -146,9 +174,6 @@ class StudentViewModel: ObservableObject {
         NetworkManager.shared.postRequest(url: url, body: jsonData) { result in
             DispatchQueue.main.async {
                 self.isLoading = false
-                if endPoint == .bookAppointment {
-                    print("URL: \(url), Params: \(params), Result: \(result)")
-                }
                 switch result {
                 case .success(let (data, response)):
                     let statusCode = response.statusCode
@@ -170,6 +195,9 @@ class StudentViewModel: ObservableObject {
                                 } else {
                                     self.postRequest(endPoint: .getAllStudents)
                                 }
+                            } else if endPoint == .bookAppointment {
+                                self.isBookAppointment = true
+                                self.showToastMessage("Sucessfully booked appointment...!", type: .success)
                             }
                         }
                     } catch {

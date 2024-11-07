@@ -90,7 +90,7 @@ struct GiveFeedbackView: View {
                 Spacer(minLength: 20)
                 Button(action: {
                     self.facultyVM.postRequest(endPoint: .giveFeedback, params: ["feedback": comments, "id": "\(model.id)"])
-                    dismiss.callAsFunction()
+                    self.retunTabView()
                 }, label: {
                     Text("Submit")
                         .customButtonStyle(textColor: .anyWhite, fontSize: 18, fontName: .generalSansSemiBold, bgColor: .blue31, width: .screen48Width, height: 55, shape: RoundedRectangle(cornerRadius: 16), shadowRadius: 1.0)
@@ -100,6 +100,13 @@ struct GiveFeedbackView: View {
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }
         }
+    }
+    
+    func retunTabView() {
+        self.facultyVM.showToast = true
+        self.facultyVM.toastMessage = "Feedbook submitted successfully..!"
+        self.facultyVM.toastType = .success
+        dismiss.callAsFunction()
     }
 }
 
