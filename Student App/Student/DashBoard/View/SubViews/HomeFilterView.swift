@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeFilterView: View {
     @EnvironmentObject var vm : StudentViewModel
+    @State private var applyFliter: Bool = false
     var body: some View {
         GeometryReader { geometry in
             ZStack{
@@ -72,17 +73,19 @@ struct HomeFilterView: View {
                     }
                     Spacer(minLength: 0)
                     
-                    NavigationLink(destination: EnterDetailsView().navigationBarBackButtonHidden(), label: {
-                        Text("Confirm")
-                            .customButtonStyle(textColor: .anyWhite, fontSize: 18, fontName: .generalSansSemiBold, bgColor: .blue31, width: .screen24Width, height: 55, shape: RoundedRectangle(cornerRadius: 16), shadowRadius: 1.0)
-                            .onTapGesture {
-                                let params = ["country" : self.vm.selectedCountry.joined(separator: ", "),
-                                              "location": "",
-                                              "state": self.vm.selectedState.joined(separator: ", "),
-                                              "universityName":""]
-                                self.vm.postRequest(endPoint: .searchUniversity, params: params)
-                            }
-                    })
+                    Text("Confirm")
+                        .customButtonStyle(textColor: .anyWhite, fontSize: 18, fontName: .generalSansSemiBold, bgColor: .blue31, width: .screen24Width, height: 55, shape: RoundedRectangle(cornerRadius: 16), shadowRadius: 1.0)
+                        .onTapGesture {
+                            let params = ["country" : self.vm.selectedCountry.joined(separator: ", "),
+                                          "location": "",
+                                          "state": self.vm.selectedState.joined(separator: ", "),
+                                          "universityName":""]
+                            self.vm.postRequest(endPoint: .searchUniversity, params: params)
+                            self.applyFliter = true
+                        }
+                        .navigationDestination(isPresented: $applyFliter, destination: {
+                            StudentTabView().navigationBarBackButtonHidden()
+                        })
                 }
             }
         }

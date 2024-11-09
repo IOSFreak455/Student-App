@@ -63,6 +63,10 @@ struct OTPView: View {
                     .onTapGesture {
                         if otpText == "1234" {
                             self.isVerifyOTP = true
+                        } else {
+                            self.vm.showToast = true
+                            self.vm.toastType = .error
+                            self.vm.toastMessage = "Invalid OTP, Please try agian..!"
                         }
                     }
                     .navigationDestination(isPresented: $isVerifyOTP, destination: {

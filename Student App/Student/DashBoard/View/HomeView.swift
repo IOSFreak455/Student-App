@@ -20,12 +20,14 @@ struct HomeView: View {
                     HStack{
                         SearchBar(text: $searchText)
                         Spacer()
-                        Image(systemName: "slider.horizontal.3")
-                            .customLabelStyle(textColor: .blue31, fontSize: 22, fontName: .generalSansSemiBold)
-                            .frame(width: 50, height: 50)
-                            .background(Color.anyWhite)
-                            .cornerRadius(10)
-                            .shadow(color: .gray153, radius: 0.45, x: 0.3, y: 0.3)
+                        NavigationLink(destination: HomeFilterView().environmentObject(vm).navigationBarBackButtonHidden(), label: {
+                            Image(systemName: "slider.horizontal.3")
+                                .customLabelStyle(textColor: .blue31, fontSize: 22, fontName: .generalSansSemiBold)
+                                .frame(width: 50, height: 50)
+                                .background(Color.anyWhite)
+                                .cornerRadius(10)
+                                .shadow(color: .gray153, radius: 0.45, x: 0.3, y: 0.3)
+                        })
                     }
                     
                     ScrollView(.vertical, showsIndicators: false){
