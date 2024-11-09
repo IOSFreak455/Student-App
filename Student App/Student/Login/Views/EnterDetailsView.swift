@@ -12,6 +12,10 @@ struct EnterDetailsView: View {
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var email: String = ""
+    @State private var isShowSheet = false
+    @State private var sourceType: SourceType = .camera
+    @State private var isUploadSheet: Bool = false
+    @State var selectedImage: UIImage?
     var body: some View {
         VStack(alignment: .leading, spacing: 10){
             BackButtonView()
@@ -22,6 +26,51 @@ struct EnterDetailsView: View {
                 .customLabelStyle(textColor: .gray64, fontSize: 16, fontName: .generalSansRegular)
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 10){
+                    VStack {
+                        if let imageToPreview = selectedImage {
+                            Image(uiImage: imageToPreview)
+                                .resizable()
+                                .scaledToFill()
+                                .clipShape(Circle())
+                                .frame(width: 120, height: 120)
+                                .overlay(Circle().stroke(Color.white, lineWidth: 4))
+                                .shadow(radius: 10)
+                        } else {
+                            Image("user_placeholder").resizable()
+                                .frame(width: 120, height: 120)
+                        }
+                    } .overlay(alignment: .bottomTrailing, content: {
+                            Image(systemName: "pencil.circle.fill").resizable()
+                                .frame(width: 30, height: 30)
+                                .foregroundColor(.orange)
+                                .offset(y: -15)
+                        })
+                        .onTapGesture {
+                            self.isShowSheet = true
+                        }
+                        .confirmationDialog("Choose an option", isPresented: $isShowSheet) {
+                            Button("Camera"){
+                                if vm.isCameraAccessDenied {
+                                    vm.checkInitialAccessStatus()
+                                    self.isShowSheet = false
+                                } else {
+                                    sourceType = .camera
+                                    self.isUploadSheet = true
+                                }
+                            }
+                            Button("Photo Library"){
+                                if vm.isPhotoLibraryAccessDenied {
+                                    vm.checkInitialAccessStatus()
+                                    self.isShowSheet = false
+                                } else {
+                                    sourceType = .photoLibrary
+                                    self.isUploadSheet = true
+                                }
+                            }
+                        }
+                        .frame(width: .screen24Width, alignment: .center)
+                        .padding(.top)
+                    
                     AnimatedTextField(text: $firstName, placeholder: "First Name")
                     
                     AnimatedTextField(text: $lastName, placeholder: "Last Name")
@@ -55,6 +104,14 @@ struct EnterDetailsView: View {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
             .overlay(vm.showToast ? ToastView(style: vm.toastType, message: vm.toastMessage ?? "", isShowing: $vm.showToast) : nil, alignment: .top)
+            .sheet(isPresented: $isUploadSheet) {
+                ImagePicker(sourceType: sourceType == .camera ? .camera : .photoLibrary, onImagePicked: { image, url in
+                    self.vm.saveImageToUserDefaults(image: image, key: "profileImage")
+                    self.selectedImage = image
+                }, onCancel: {
+                    self.isUploadSheet = false
+                }).edgesIgnoringSafeArea(.bottom)
+            }
     }
     func validateFeilds() -> Bool {
         if firstName.isEmpty {

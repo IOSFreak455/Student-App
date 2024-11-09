@@ -12,26 +12,26 @@ struct StudentTabView: View {
     @State var selectedIndex: Int = 0
     var body: some View {
         TabView(selection: $selectedIndex) {
-            HomeView().environmentObject(vm)
+            HomeView(selectedTab: $selectedIndex)
                 .tabItem {
                     Label("Home", systemImage: "house")
                 } .tag(0)
             
-            SearchView().environmentObject(vm)
+            SearchView()
                 .tabItem {
                     Label("Search", systemImage: "magnifyingglass")
                 } .tag(1)
             
-            AppointmentsView().environmentObject(vm)
+            AppointmentsView()
                 .tabItem {
                     Label("Appointments", systemImage: "calendar")
                 }  .tag(2)
             
-            ProfileView().environmentObject(vm)
+            ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person")
                 }  .tag(3)
-        }.tint(.blue31)
+        }.environmentObject(vm).tint(.blue31)
             .onAppear(perform: {
                 UITabBar.appearance().unselectedItemTintColor = .gray111
                 UITabBarItem.appearance().badgeColor = .red

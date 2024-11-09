@@ -36,6 +36,44 @@ class NetworkManager {
             }
         }.resume()
     }
+
+    func getRequestWithBody(url: URL, parameters: [String: Any], completion: @escaping (Result<(Data?, HTTPURLResponse), Error>) -> Void) {
+        // Convert the parameters to JSON data
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: parameters, options: [])
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsonData
+            
+            // Perform the network request
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    let httpResponse = response as? HTTPURLResponse
+                    // Return error in the completion block
+                    completion(.failure(NSError(domain: "", code: httpResponse?.statusCode ?? -1, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])))
+                    return
+                }
+                
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    // Invalid response
+                    completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid Response"])))
+                    return
+                }
+                
+                // Handle 204 No Content status code
+                if httpResponse.statusCode == 204 {
+                    completion(.success((nil, httpResponse)))
+                } else {
+                    completion(.success((data, httpResponse)))
+                }
+            }.resume()
+        } catch {
+            // Handle JSON serialization error
+            completion(.failure(error))
+        }
+    }
     
     func getRequest(url: URL, params: [String: String], authToken: String? = nil, completion: @escaping (Result<(Data?, HTTPURLResponse), Error>) -> Void) {
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!

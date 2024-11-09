@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import PhotosUI
 
 class StudentViewModel: ObservableObject {
     // Loading & Toast Message
@@ -53,6 +54,12 @@ class StudentViewModel: ObservableObject {
     
     @Published var isSavedAccount: Bool = false
     
+    @Published var searchUniversity: [University] = []
+    @Published var recentSearches: [String] = []
+    
+    @Published var isCameraAccessDenied = false
+    @Published var isPhotoLibraryAccessDenied = false
+    
     init(){
         self.postQueryRequest(endPoint: .getStudentDetailsByMobileNumber, params: ["phoneNumber": APIUrls.phoneNumber])
         loadSlots()
@@ -81,6 +88,23 @@ class StudentViewModel: ObservableObject {
         }
         
         return images
+    }
+    
+    func addRecentSearch(newValue: String) {
+        if !newValue.isEmpty {
+            recentSearches.append(newValue)
+            UserDefaults.standard.set(recentSearches, forKey: "recentSearch")
+        }
+    }
+       
+    func loadRecentSearch() {
+        if let savedUsers = UserDefaults.standard.array(forKey: "recentSearch") as? [String] {
+            recentSearches = savedUsers
+        }
+    }
+    
+    func deleteRecentSearch() {
+        UserDefaults.standard.set(recentSearches, forKey: "recentSearch")
     }
     
     func postQueryRequest(endPoint: EndPoints, params: [String: String]) {
@@ -157,6 +181,37 @@ class StudentViewModel: ObservableObject {
         }
     }
     
+    func getRequest(endPoint: EndPoints, params: [String: Any]) {
+        self.isLoading = true
+        guard let url = URL(string: APIUrls.baseUrl+endPoint.rawValue) else {
+            showToastMessage("Invalid URL", type: .error)
+            isLoading = false
+            return
+        }
+        
+        NetworkManager.shared.getRequestWithBody(url: url, parameters: params) { result in
+            DispatchQueue.main.async {
+                self.isLoading = false
+                switch result {
+                case .success(let (data, response)):
+                    let statusCode = response.statusCode
+                    do {
+                        if statusCode == 200 {
+                            if endPoint == .searchUniversity {
+                                let responseModel = try JSONDecoder().decode(AllUniversity.self, from: data!)
+                                self.searchUniversity = responseModel.universities
+                            }
+                        }
+                    } catch {
+                        self.showToastMessage(error.localizedDescription, type: .error)
+                    }
+                case .failure(let error as NSError):
+                    self.showToastMessage(error.localizedDescription, type: .error)
+                }
+            }
+        }
+    }
+    
     func postRequest(endPoint: EndPoints, params: [String: String]) {
         self.isLoading = true
         guard let url = URL(string: APIUrls.baseUrl+endPoint.rawValue) else {
@@ -198,6 +253,9 @@ class StudentViewModel: ObservableObject {
                             } else if endPoint == .bookAppointment {
                                 self.isBookAppointment = true
                                 self.showToastMessage("Sucessfully booked appointment...!", type: .success)
+                            } else if endPoint == .searchUniversity {
+                                let responseModel = try JSONDecoder().decode(AllUniversity.self, from: data!)
+                                self.searchUniversity = responseModel.universities
                             }
                         }
                     } catch {
@@ -279,6 +337,63 @@ extension Image {
         let renderer = UIGraphicsImageRenderer(size: view?.bounds.size ?? CGSize.zero)
         return renderer.image { _ in
             view?.drawHierarchy(in: view!.bounds, afterScreenUpdates: true)
+        }
+    }
+}
+
+// Camera, PhotoLibrary
+extension StudentViewModel {
+    func saveImageToUserDefaults(image: UIImage, key: String) {
+        if let imageData = image.pngData() { // You can use jpegData() too
+            UserDefaults.standard.set(imageData, forKey: key)
+        }
+    }
+
+    // Function to load UIImage from UserDefaults
+    func loadImageFromUserDefaults(key: String) -> UIImage? {
+        if let imageData = UserDefaults.standard.data(forKey: key) {
+            return UIImage(data: imageData)
+        }
+        return nil
+    }
+    
+    func requestCameraAccess() {
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            DispatchQueue.main.async {
+                self.isCameraAccessDenied = !granted
+            }
+        }
+    }
+    
+    func requestPhotoLibraryAccess() {
+        PHPhotoLibrary.requestAuthorization { status in
+            DispatchQueue.main.async {
+                switch status {
+                case .authorized:
+                    self.isPhotoLibraryAccessDenied = false
+                case .denied, .restricted, .notDetermined:
+                    self.isPhotoLibraryAccessDenied = true
+                default:
+                    break
+                }
+            }
+        }
+    }
+    
+    func checkInitialAccessStatus() {
+        // Check camera access
+        let cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        isCameraAccessDenied = (cameraStatus == .denied || cameraStatus == .restricted)
+        if isCameraAccessDenied {
+            self.showToastMessage("Camera Access Denied/nPlease enable camera access in Settings.", type: .error)
+            return
+        }
+        // Check photo library access
+        let photoStatus = PHPhotoLibrary.authorizationStatus()
+        isPhotoLibraryAccessDenied = (photoStatus == .denied || photoStatus == .restricted)
+        if isPhotoLibraryAccessDenied {
+            self.showToastMessage("Photo Access Denied/nPlease enable media access in Settings.", type: .error)
+            return
         }
     }
 }

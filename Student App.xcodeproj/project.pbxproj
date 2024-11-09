@@ -32,6 +32,8 @@
 		DC4D377B2C440DB300F23811 /* Constants+API's.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC4D377A2C440DB300F23811 /* Constants+API's.swift */; };
 		DC4D377D2C44151400F23811 /* FacultyLoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC4D377C2C44151400F23811 /* FacultyLoginModel.swift */; };
 		DC4D37812C442F1A00F23811 /* FacultyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC4D37802C442F1A00F23811 /* FacultyViewModel.swift */; };
+		DC7014142CDFC93400F1686A /* UniversityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC7014132CDFC92A00F1686A /* UniversityListView.swift */; };
+		DC7014162CDFE7E700F1686A /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC7014152CDFE7E700F1686A /* ImagePickerView.swift */; };
 		DCB047CE2CAAE26E005F0FFF /* LoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB047CD2CAAE262005F0FFF /* LoginModel.swift */; };
 		DCBA7D762C7C5FE3003C54D0 /* StudentLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCBA7D752C7C5FE3003C54D0 /* StudentLoginViewModel.swift */; };
 		DCC049122C41983B009F76E9 /* Student_AppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCC049112C41983B009F76E9 /* Student_AppApp.swift */; };
@@ -88,6 +90,8 @@
 		DC4D377A2C440DB300F23811 /* Constants+API's.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Constants+API's.swift"; sourceTree = "<group>"; };
 		DC4D377C2C44151400F23811 /* FacultyLoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacultyLoginModel.swift; sourceTree = "<group>"; };
 		DC4D37802C442F1A00F23811 /* FacultyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacultyViewModel.swift; sourceTree = "<group>"; };
+		DC7014132CDFC92A00F1686A /* UniversityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversityListView.swift; sourceTree = "<group>"; };
+		DC7014152CDFE7E700F1686A /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		DCB047CD2CAAE262005F0FFF /* LoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginModel.swift; sourceTree = "<group>"; };
 		DCBA7D752C7C5FE3003C54D0 /* StudentLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentLoginViewModel.swift; sourceTree = "<group>"; };
 		DCC0490E2C41983B009F76E9 /* Student App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Student App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,6 +138,7 @@
 		DC4D372B2C4241E000F23811 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				DC7014132CDFC92A00F1686A /* UniversityListView.swift */,
 				DC4D37322C42522D00F23811 /* HomeViewCells.swift */,
 				DC4D37382C425F4300F23811 /* HomeFilterView.swift */,
 				DC4D373A2C42682D00F23811 /* ProfileDetailView.swift */,
@@ -381,6 +386,7 @@
 			children = (
 				DCC2B6AA2C41B53700BC44AE /* ButtonViews.swift */,
 				DCC2B6AE2C41B74900BC44AE /* TextFieldViews.swift */,
+				DC7014152CDFE7E700F1686A /* ImagePickerView.swift */,
 			);
 			path = "Common Views";
 			sourceTree = "<group>";
@@ -506,9 +512,11 @@
 				DC451E2A2C4B473B00A755B4 /* StudentModels.swift in Sources */,
 				DCC2B6BA2C41BE6600BC44AE /* AppointmentsView.swift in Sources */,
 				DC4D37332C42522D00F23811 /* HomeViewCells.swift in Sources */,
+				DC7014162CDFE7E700F1686A /* ImagePickerView.swift in Sources */,
 				DCC2B6A82C41B32B00BC44AE /* OTPView.swift in Sources */,
 				DCC2B68F2C41A83300BC44AE /* LoginView.swift in Sources */,
 				DCC2B6AF2C41B74900BC44AE /* TextFieldViews.swift in Sources */,
+				DC7014142CDFC93400F1686A /* UniversityListView.swift in Sources */,
 				DC4D37532C42849300F23811 /* FacultyCalendarView.swift in Sources */,
 				DC4D37732C440CEF00F23811 /* ActivityIndicatorView.swift in Sources */,
 				DC4D372F2C4251FE00F23811 /* PickSlotView.swift in Sources */,
@@ -677,7 +685,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"Student App/Preview Content\"";
 				DEVELOPMENT_TEAM = W23FZQ88L8;
 				ENABLE_PREVIEWS = YES;
@@ -718,7 +726,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"Student App/Preview Content\"";
 				DEVELOPMENT_TEAM = W23FZQ88L8;
 				ENABLE_PREVIEWS = YES;

@@ -15,6 +15,11 @@ struct ProfileDetailView: View {
     @State var location: String = ""
     @State var collegeName: String = ""
     @State var year: String = "2024"
+    
+    @State var selectedImage: UIImage?
+    @State private var isShowSheet = false
+    @State private var sourceType: SourceType = .camera
+    @State private var isUploadSheet: Bool = false
     var body: some View {
         ZStack{
             Color.white252.ignoresSafeArea()
@@ -25,17 +30,49 @@ struct ProfileDetailView: View {
                         .customLabelStyle(textColor: .black50, fontSize: 22, fontName: .generalSansMedium)
                 }
                 
-                Image("user_placeholder").resizable()
-                    .frame(width: 160, height: 160)
-                    .overlay(alignment: .bottomTrailing, content: {
+                VStack {
+                    if let imageToPreview = selectedImage {
+                        Image(uiImage: imageToPreview)
+                            .resizable()
+                            .scaledToFill()
+                            .clipShape(Circle())
+                            .frame(width: 160, height: 160)
+                            .overlay(Circle().stroke(Color.white, lineWidth: 4))
+                            .shadow(radius: 10)
+                    } else {
+                        Image("user_placeholder").resizable()
+                            .frame(width: 160, height: 160)
+                    }
+                } .overlay(alignment: .bottomTrailing, content: {
                         Image(systemName: "pencil.circle.fill").resizable()
-                            .frame(width: 40, height: 40)
-                            .foregroundColor(.blue31)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.orange)
+                            .offset(y: -15)
                     })
-                    
-                
+                    .onTapGesture {
+                        self.isShowSheet = true
+                    }
+                    .confirmationDialog("Choose an option", isPresented: $isShowSheet) {
+                        Button("Camera"){
+                            if vm.isCameraAccessDenied {
+                                vm.checkInitialAccessStatus()
+                                self.isShowSheet = false
+                            } else {
+                                sourceType = .camera
+                                self.isUploadSheet = true
+                            }
+                        }
+                        Button("Photo Library"){
+                            if vm.isPhotoLibraryAccessDenied {
+                                vm.checkInitialAccessStatus()
+                                self.isShowSheet = false
+                            } else {
+                                sourceType = .photoLibrary
+                                self.isUploadSheet = true
+                            }
+                        }
+                    }
                     .frame(width: .screen24Width, alignment: .center)
-                
                 VStack(alignment: .leading, spacing: 5) {
                     AnimatedTextField(text: $name, placeholder: "Name")
                     
@@ -80,18 +117,31 @@ struct ProfileDetailView: View {
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }
         }
+        .sheet(isPresented: $isUploadSheet) {
+            ImagePicker(sourceType: sourceType == .camera ? .camera : .photoLibrary, onImagePicked: { image, url in
+                self.vm.saveImageToUserDefaults(image: image, key: "profileImage")
+                self.selectedImage = image
+            }, onCancel: {
+                self.isUploadSheet = false
+            }).edgesIgnoringSafeArea(.bottom)
+        }
+        
         .onAppear {
             self.name = vm.studentDetails?.studentname ?? ""
             self.email = vm.studentDetails?.email ?? ""
             self.phoneNumber = vm.studentDetails?.phonenumber ?? ""
             self.collegeName = vm.studentDetails?.universityname ?? ""
             self.location = vm.studentDetails?.studentlocation ?? ""
+            if let loadedImage = vm.loadImageFromUserDefaults(key: "profileImage") {
+                selectedImage = loadedImage
+                print("Image loaded!")
+            }
         }
     }
 }
 
 #Preview {
-    ProfileDetailView()
+    ProfileDetailView().environmentObject(StudentViewModel())
 }
 
 struct UniversityProfileDetailView: View {
@@ -179,5 +229,5 @@ struct UniversityProfileDetailView: View {
 }
 
 #Preview {
-    ProfileDetailView()
+    ProfileDetailView().environmentObject(StudentViewModel())
 }

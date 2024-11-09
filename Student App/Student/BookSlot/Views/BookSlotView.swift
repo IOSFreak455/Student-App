@@ -18,7 +18,6 @@ struct BookSlotView: View {
     @Environment(\.dismiss) private var dismiss
     var body: some View {
         VStack(spacing: 0){
-            
             AsyncImage(url: URL(string: data.images ?? "")) { image in
                 image.resizable()
                     .edgesIgnoringSafeArea(.top)

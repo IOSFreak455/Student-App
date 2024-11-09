@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PhotosUI
 
 class StudentLoginViewModel: ObservableObject {
     // Loading & Toast Message
@@ -18,6 +19,9 @@ class StudentLoginViewModel: ObservableObject {
     @Published var isUserExist: Bool = false
     
     @Published var isCreateAccount: Bool = false
+    
+    @Published var isCameraAccessDenied = false
+    @Published var isPhotoLibraryAccessDenied = false
     
     func postQueryRequest(endPoint: EndPoints, params: [String: String]) {
         self.isLoading = true
@@ -97,3 +101,59 @@ class StudentLoginViewModel: ObservableObject {
     }
 }
 
+// Camera, PhotoLibrary
+extension StudentLoginViewModel {
+    func saveImageToUserDefaults(image: UIImage, key: String) {
+        if let imageData = image.pngData() { // You can use jpegData() too
+            UserDefaults.standard.set(imageData, forKey: key)
+        }
+    }
+
+    // Function to load UIImage from UserDefaults
+    func loadImageFromUserDefaults(key: String) -> UIImage? {
+        if let imageData = UserDefaults.standard.data(forKey: key) {
+            return UIImage(data: imageData)
+        }
+        return nil
+    }
+    
+    func requestCameraAccess() {
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            DispatchQueue.main.async {
+                self.isCameraAccessDenied = !granted
+            }
+        }
+    }
+    
+    func requestPhotoLibraryAccess() {
+        PHPhotoLibrary.requestAuthorization { status in
+            DispatchQueue.main.async {
+                switch status {
+                case .authorized:
+                    self.isPhotoLibraryAccessDenied = false
+                case .denied, .restricted, .notDetermined:
+                    self.isPhotoLibraryAccessDenied = true
+                default:
+                    break
+                }
+            }
+        }
+    }
+    
+    func checkInitialAccessStatus() {
+        // Check camera access
+        let cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        isCameraAccessDenied = (cameraStatus == .denied || cameraStatus == .restricted)
+        if isCameraAccessDenied {
+            self.showToastMessage("Camera Access Denied/nPlease enable camera access in Settings.", type: .error)
+            return
+        }
+        // Check photo library access
+        let photoStatus = PHPhotoLibrary.authorizationStatus()
+        isPhotoLibraryAccessDenied = (photoStatus == .denied || photoStatus == .restricted)
+        if isPhotoLibraryAccessDenied {
+            self.showToastMessage("Photo Access Denied/nPlease enable media access in Settings.", type: .error)
+            return
+        }
+    }
+}

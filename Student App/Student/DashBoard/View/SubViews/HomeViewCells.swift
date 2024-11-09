@@ -17,10 +17,9 @@ struct UniversityAppointmentCell: View {
                 image.resizable()
             } placeholder: {
                 Image(images.randomElement() ?? "").resizable()
-            }
-            .aspectRatio(contentMode: .fill)
-            .frame(width: .screen24Width, height: 120)
-            .clipShape(.rect(cornerRadius: 20))
+            }.frame(width: .screen24Width, height: 120)
+                .scaledToFill()
+            
             HStack(alignment: .top){
                 VStack(alignment: .leading, spacing: 5){
                     Text(data.universityname ?? "--")
@@ -41,7 +40,7 @@ struct UniversityAppointmentCell: View {
                 }
             }.padding(12).background(Color.anyWhite)
         }.clipShape(RoundedRectangle(cornerRadius: 20))
-            .shadow(radius: 3)
+            .shadow(color: .black, radius: 2, x: 3, y: 3)
             .overlay(alignment: .topLeading, content: {
                 Text("\(data.appointmentdate?.formattedDate() ?? "Aug 24th 2024") | \(data.appointmentslot ?? "01:00-02:00")").tracking(1)
                     .customLabelStyle(textColor: .anyWhite, fontSize: 12, fontName: .generalSansMedium)

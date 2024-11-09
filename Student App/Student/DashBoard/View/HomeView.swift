@@ -11,36 +11,48 @@ struct HomeView: View {
     @EnvironmentObject var vm : StudentViewModel
     @State private var searchText: String = ""
     @State var isBookingSlot: Bool = false
+    @Binding var selectedTab: Int
     var body: some View {
-//        LoadingView(isLoading: $vm.isLoading){
             ZStack{
                 Color.white252
                     .ignoresSafeArea()
                 VStack(spacing: 20){
                     HStack{
-                        SearchBar(text: $searchText)
+                        Text(vm.studentDetails?.studentname.prefix(1) ?? "S")
+                            .customLabelStyle(textColor: .blue31, fontSize: 22, fontName: .generalSansSemiBold)
+                            .frame(width: 50, height: 50)
+                            .background(Color.anyWhite)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.gray153, lineWidth: 2))
+                            .shadow(color: .gray153, radius: 2, x: 2, y: -1)
                         Spacer()
-                        NavigationLink(destination: HomeFilterView().environmentObject(vm).navigationBarBackButtonHidden(), label: {
-                            Image(systemName: "slider.horizontal.3")
-                                .customLabelStyle(textColor: .blue31, fontSize: 22, fontName: .generalSansSemiBold)
-                                .frame(width: 50, height: 50)
-                                .background(Color.anyWhite)
-                                .cornerRadius(10)
-                                .shadow(color: .gray153, radius: 0.45, x: 0.3, y: 0.3)
-                        })
+                        SearchBar(text: $searchText)
+                            .onTapGesture {
+                                selectedTab = 1
+                            }
                     }
                     
                     ScrollView(.vertical, showsIndicators: false){
                         VStack(alignment: .leading, spacing: 20){
-                            Text("Upcoming Appointments")
-                                .customLabelStyle(textColor: .black50, fontSize: 16, fontName: .generalSansSemiBold)
-                                .frame(width: .screen24Width, alignment: .leading)
+                            HStack {
+                                Text("Upcoming Appointments")
+                                    .customLabelStyle(textColor: .black50, fontSize: 16, fontName: .generalSansSemiBold)
+                                Spacer(minLength: 0)
+                                if vm.upComingAppos.count > 2 {
+                                    Text("See all")
+                                        .customLabelStyle(textColor: .green, fontSize: 16, fontName: .generalSansSemiBold)
+                                        .onTapGesture {
+                                            selectedTab = 2
+                                        }
+                                }
+                            }
+                            
                             if vm.upComingAppos.isEmpty {
                                 ShimmerEffectView()
                                 ShimmerEffectView()
                             } else {
-                                ForEach(vm.upComingAppos, id: \.self){ data in
-                                    UniversityAppointmentCell(data: data)
+                                ForEach(0..<(vm.upComingAppos.count > 2 ? 2 : vm.upComingAppos.count), id: \.self){ data in
+                                    UniversityAppointmentCell(data: vm.upComingAppos[data])
                                 }
                             }
                         }.padding(.vertical, 10)
@@ -69,7 +81,6 @@ struct HomeView: View {
                     }
                 }.frame(width: .screen24Width, alignment: .leading)
             }
-//        }
         .onAppear{
             self.vm.postRequest(endPoint: .getUpcomingAppos)
         }
@@ -77,5 +88,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView().environmentObject(StudentViewModel())
+    HomeView(selectedTab: .constant(0)).environmentObject(StudentViewModel())
 }

@@ -29,6 +29,14 @@ struct LoginView: View {
                     
                     VStack{
                         TextField("Phone Number", text: $vm.phoneNumber).tracking(1.0)
+                            .onChange(of: self.vm.phoneNumber) { newValue in
+                                let filtered = newValue.filter { "0123456789".contains($0) }
+                                if filtered.count > 10 {
+                                    vm.phoneNumber = String(filtered.prefix(10))
+                                } else {
+                                    vm.phoneNumber = filtered
+                                }
+                            }
                             .customLabelStyle(textColor: .anyBlack, fontSize: 16, fontName: .generalSansMedium)
                         Divider()
                     }

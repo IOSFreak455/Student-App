@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeFilterView: View {
     @EnvironmentObject var vm : StudentViewModel
     @State private var applyFliter: Bool = false
+    @Environment(\.dismiss) private var dismiss
     var body: some View {
         GeometryReader { geometry in
             ZStack{
@@ -76,15 +77,14 @@ struct HomeFilterView: View {
                     Text("Confirm")
                         .customButtonStyle(textColor: .anyWhite, fontSize: 18, fontName: .generalSansSemiBold, bgColor: .blue31, width: .screen24Width, height: 55, shape: RoundedRectangle(cornerRadius: 16), shadowRadius: 1.0)
                         .onTapGesture {
-                            let params = ["country" : self.vm.selectedCountry.joined(separator: ", "),
-                                          "location": "",
-                                          "state": self.vm.selectedState.joined(separator: ", "),
-                                          "universityName":""]
-                            self.vm.postRequest(endPoint: .searchUniversity, params: params)
-                            self.applyFliter = true
+                            let params = ["country" : "\(self.vm.selectedCountry.first ?? "")",
+                                          "state": "\(self.vm.selectedState.first ?? "")"]
+                            self.vm.getRequest(endPoint: .searchUniversity, params: params)
+                            self.vm.addRecentSearch(newValue: "\(self.vm.selectedCountry.first ?? "") \(self.vm.selectedState.first ?? "")")
+                            dismiss.callAsFunction()
                         }
                         .navigationDestination(isPresented: $applyFliter, destination: {
-                            StudentTabView().navigationBarBackButtonHidden()
+                            UniversityListView(pageTitle: "Filtered Universities").navigationBarBackButtonHidden()
                         })
                 }
             }
@@ -126,7 +126,7 @@ struct FlowLayout: View {
            if let index = selectedArray.firstIndex(of: country) {
                selectedArray.remove(at: index) // Deselect if already selected
            } else {
-               selectedArray.append(country) // Select if not already selected
+               selectedArray = [country] // Select if not already selected
            }
        }
     
