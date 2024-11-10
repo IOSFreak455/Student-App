@@ -15,6 +15,14 @@ struct SearchView: View {
         GridItem(.flexible())
     ]
     @State var isFilter: Bool = false
+    
+    var filteredItems: [University] {
+        if searchText.isEmpty {
+            return self.vm.searchUniversity
+        } else {
+            return self.vm.searchUniversity.filter { $0.universityname.lowercased().contains(searchText.lowercased()) }
+        }
+    }
     var body: some View {
         ZStack{
             Color.white252
@@ -63,7 +71,7 @@ struct SearchView: View {
                             .customLabelStyle(textColor: .black50, fontSize: 17, fontName: .generalSansMedium)
                         
                         LazyVGrid(columns: columns, spacing: 20) {
-                            ForEach(self.vm.searchUniversity, id: \.self){ data in
+                            ForEach(self.filteredItems, id: \.self){ data in
                                 NavigationLink(destination: BookSlotView(data: data).environmentObject(vm).navigationBarBackButtonHidden(), label: {
                                     RecommendedUniversityCell(data: data).environmentObject(vm)
                                         .frame(width: .screen48Width/2)

@@ -162,16 +162,24 @@ struct UniversityProfileDetailView: View {
                         .customLabelStyle(textColor: .black50, fontSize: 22, fontName: .generalSansMedium)
                 }
                 
-                Image("user_placeholder").resizable()
-                    .frame(width: 160, height: 160)
-                    .overlay(alignment: .bottomTrailing, content: {
-                        Image(systemName: "pencil.circle.fill").resizable()
-                            .frame(width: 40, height: 40)
-                            .foregroundColor(.blue31)
-                    })
-                    
-                
+                AsyncImage(url: URL(string: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg")) { image in
+                    image.resizable()
+                } placeholder: {
+                    Image("user_placeholder").resizable()
+                }.frame(width: 160, height: 160)
+                    .scaledToFill()
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color.white, lineWidth: 4))
+                    .shadow(radius: 10)
                     .frame(width: .screen24Width, alignment: .center)
+                
+//                Image("user_placeholder").resizable()
+//                    .frame(width: 160, height: 160)
+//                    .overlay(alignment: .bottomTrailing, content: {
+//                        Image(systemName: "pencil.circle.fill").resizable()
+//                            .frame(width: 40, height: 40)
+//                            .foregroundColor(.blue31)
+//                    }).frame(width: .screen24Width, alignment: .center)
                 
                 VStack(alignment: .leading, spacing: 5) {
                     AnimatedTextField(text: $name, placeholder: "Name")

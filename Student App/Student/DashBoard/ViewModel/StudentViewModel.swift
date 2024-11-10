@@ -181,7 +181,7 @@ class StudentViewModel: ObservableObject {
         }
     }
     
-    func getRequest(endPoint: EndPoints, params: [String: Any]) {
+    func getRequest(endPoint: EndPoints, params: [String: String]) {
         self.isLoading = true
         guard let url = URL(string: APIUrls.baseUrl+endPoint.rawValue) else {
             showToastMessage("Invalid URL", type: .error)
@@ -189,24 +189,25 @@ class StudentViewModel: ObservableObject {
             return
         }
         
-        NetworkManager.shared.getRequestWithBody(url: url, parameters: params) { result in
+        NetworkManager.shared.getRequest(url: url, params: params) { result in
             DispatchQueue.main.async {
                 self.isLoading = false
                 switch result {
                 case .success(let (data, response)):
-                    let statusCode = response.statusCode
                     do {
-                        if statusCode == 200 {
+                        if response.statusCode == 200 {
                             if endPoint == .searchUniversity {
-                                let responseModel = try JSONDecoder().decode(AllUniversity.self, from: data!)
-                                self.searchUniversity = responseModel.universities
+                                let responseModel = try JSONDecoder().decode([University].self, from: data!)
+                                self.searchUniversity = responseModel
                             }
+                        } else {
+                            self.showToastMessage("Some thing went wrong", type: .error)
                         }
                     } catch {
-                        self.showToastMessage(error.localizedDescription, type: .error)
+                        self.toastMessage = error.localizedDescription
                     }
-                case .failure(let error as NSError):
-                    self.showToastMessage(error.localizedDescription, type: .error)
+                case .failure(let error):
+                    self.toastMessage = error.localizedDescription
                 }
             }
         }
@@ -253,9 +254,6 @@ class StudentViewModel: ObservableObject {
                             } else if endPoint == .bookAppointment {
                                 self.isBookAppointment = true
                                 self.showToastMessage("Sucessfully booked appointment...!", type: .success)
-                            } else if endPoint == .searchUniversity {
-                                let responseModel = try JSONDecoder().decode(AllUniversity.self, from: data!)
-                                self.searchUniversity = responseModel.universities
                             }
                         }
                     } catch {
